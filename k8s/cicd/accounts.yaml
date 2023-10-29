@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jenkins-sa
+automountServiceAccountToken: true
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: jenkins-sa-secret
+  annotations:
+    kubernetes.io/service-account.name: jenkins-sa
+type: kubernetes.io/service-account-token
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: jenkins-role
+rules:
+  - apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["*"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: jenkins-rolebinding
+subjects:
+  - kind: ServiceAccount
+    name: jenkins-sa
+roleRef:
+  kind: Role
+  name: jenkins-role
+  apiGroup: rbac.authorization.k8s.io
