@@ -15,5 +15,12 @@ pipeline {
                 }
             }
         }
+        stage('Build image') {
+            steps {
+                container('kaniko') {
+                    sh '/kaniko/executor --dockerfile `pwd`/Dockerfile --context=`pwd` --destination=cicd-registry/imtiredofit/backend:0.0.0'
+                }
+            }
+        }
     }
 }
