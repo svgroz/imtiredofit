@@ -18,7 +18,26 @@ pipeline {
         stage('Build image') {
             steps {
                 container('kaniko') {
-                    sh '/kaniko/executor --dockerfile `pwd`/Dockerfile --context=`pwd` --destination=cicd-registry/imtiredofit/backend:0.0.0'
+                    sh 'mkdir -p /kaniko/.docker'
+                    sh '''
+cat << EOF > /kaniko/.docker/config.json
+{
+    "auths": {
+        "cicd-registry": {
+
+        }
+    }
+}
+EOF
+                    '''
+                    sh '''/kaniko/executor \
+                            --dockerfile=`pwd`/Dockerfile \
+                            --context=`pwd` \
+                            --destination=cicd-registry:5000/imtiredofit/server:latest \
+                            --insecure \
+                            --skip-tls-verify \
+                            --verbosity debug
+                        '''
                 }
             }
         }
