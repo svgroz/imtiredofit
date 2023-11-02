@@ -18,18 +18,6 @@ pipeline {
         stage('Build image') {
             steps {
                 container('kaniko') {
-                    sh 'mkdir -p /kaniko/.docker'
-                    sh '''
-cat << EOF > /kaniko/.docker/config.json
-{
-    "auths": {
-        "cicd-registry": {
-
-        }
-    }
-}
-EOF
-                    '''
                     sh '''/kaniko/executor \
                             --dockerfile=`pwd`/Dockerfile \
                             --context=`pwd` \
