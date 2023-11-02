@@ -10,6 +10,29 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: "2"
 
+configuration:
+  version: 0.1
+  log:
+    fields:
+      service: registry
+  storage:
+    cache:
+      blobdescriptor: inmemory
+    filesystem:
+      rootdirectory: /var/lib/registry
+  http:
+    addr: :5000
+    headers:
+      X-Content-Type-Options: [ nosniff ]
+    tls:
+      certificate: /var/cicd-registry-tls/tls.crt
+      key: /var/cicd-registry-tls/tls.key
+  health:
+    storagedriver:
+      enabled: true
+      interval: 10s
+      threshold: 3
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -79,17 +102,22 @@ autoscaling:
   # targetMemoryUtilizationPercentage: 80
 
 # Additional volumes on the output Deployment definition.
-volumes: []
-# - name: foo
-#   secret:
-#     secretName: mysecret
-#     optional: false
+volumes:
+  - name: cicd-registry-tls-volume
+    secret:
+      secretName: cicd-registry-tls
+      optional: false
+  - name: cicd-registry-configmap-volume
+    configMap:
+      name: cicd-registry-configs
 
 # Additional volumeMounts on the output Deployment definition.
-volumeMounts: []
-# - name: foo
-#   mountPath: "/etc/foo"
-#   readOnly: true
+volumeMounts:
+  - name: cicd-registry-tls-volume
+    mountPath: "/var/cicd-registry-tls"
+    readOnly: true
+  - name: cicd-registry-configmap-volume
+    mountPath: "/etc/docker/registry"
 
 nodeSelector: {}
 
