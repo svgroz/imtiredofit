@@ -1,0 +1,25 @@
+server:
+  port: 8000
+
+logging:
+  level:
+    root: debug
+
+spring:
+  datasource:
+    url: jdbc:postgresql://10.8.0.1:5432/imtiredoftech
+    password: imtiredoftech
+    username: imtiredoftech
+  security:
+    oauth2:
+      client:
+        provider:
+          kc:
+            issuer-uri: http://localhost:8080/realms/imtiredof.tech
+        registration:
+          kc:
+            client-id: imtiredof.tech.client
+            client-secret: BlPpHOzKeGb01fni99eYjnamAiVRVFTq
+            scope:
+              - openid
+              - roles
